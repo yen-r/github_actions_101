@@ -33,6 +33,24 @@ jobs:
         run: |
           pipenv run pytest || true
 
+
+
+
+      - name: Branch name
+        run: echo running on branch ${GITHUB_REF##*/}
+      
+      - name: Auto create RP if not on main
+        if : if: github.event_name == 'push' 
+        uses: actions/github-script@v7
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        with:
+          script: |
+            const title = process.env.TITLE;
+            console.log(title)
+            console.log("toto")
+
+
       - name: Comment PR with Test Summary
         if: github.event_name == 'pull_request'
         uses: unsplash/comment-on-pr@v1.3.0
@@ -40,3 +58,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           msg: "✅ CI completed: Linting and testing executed."
+          
