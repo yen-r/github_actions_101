@@ -35,25 +35,24 @@ jobs:
 
 
 
-      - uses: actions/github-script@v7
+      - name: Get current Branch
+        uses: actions/github-script@v7
         id: my-script
         with:
           result-encoding: string
           script: return "${GITHUB_REF##*/}"
       
       - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/} ${{steps.my-script.outputs.result}}
+        run: echo running on branch ${GITHUB_REF##*/} (${{steps.my-script.outputs.result}})
       
       - name: Auto create RP if not on main
         if : github.event_name == 'push' && ${{steps.my-script.outputs.result}} != 'main'
         uses: actions/github-script@v7
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
         with:
           script: |
-            const title = process.env.TITLE;
-            console.log(title)
             console.log("toto")
+            apk add jq curl
+            curl --request GET --url "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/repository/commits/$CI_COMMIT_BEFORE_SHA/merge_requests" --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
 
 
       - name: Comment PR with Test Summary
