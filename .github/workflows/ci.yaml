@@ -45,7 +45,7 @@ jobs:
         run: echo running on branch ${GITHUB_REF##*/} ${{steps.my-script.outputs.result}}
       
       - name: Auto create RP if not on main
-        if : github.event_name == 'push' && "${GITHUB_REF##*/}" != 'main'
+        if : github.event_name == 'push' && ${{steps.my-script.outputs.result}} != 'main'
         uses: actions/github-script@v7
         env:
           TITLE: ${{ github.event.pull_request.title }}
