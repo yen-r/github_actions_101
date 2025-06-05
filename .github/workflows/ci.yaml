@@ -33,8 +33,6 @@ jobs:
         run: |
           pipenv run pytest || true
 
-
-
       - name: Get current Branch
         uses: actions/github-script@v7
         id: my-script
@@ -44,16 +42,16 @@ jobs:
       
       - name: Branch name
         run: echo running on branch ${{steps.my-script.outputs.result}}
-      
-      - name: Auto create RP if not on main
-        if : github.event_name == 'push' && ${{steps.my-script.outputs.result}} != 'main'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            console.log("toto")
-            apk add jq curl
-            curl --request GET --url "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/repository/commits/$CI_COMMIT_BEFORE_SHA/merge_requests" --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
 
+      - name: Auto Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "feat: mise à jour automatique"
+          branch: auto/update-${{ github.run_number }}
+          title: "Mise à jour automatique"
+          body: "Cette PR a été générée automatiquement par GitHub Actions."
+          base: main
 
       - name: Comment PR with Test Summary
         if: github.event_name == 'pull_request'
