@@ -43,7 +43,7 @@ jobs:
           script: return "${GITHUB_REF##*/}"
       
       - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/} (${{steps.my-script.outputs.result}})
+        run: echo running on branch ${{steps.my-script.outputs.result}}
       
       - name: Auto create RP if not on main
         if : github.event_name == 'push' && ${{steps.my-script.outputs.result}} != 'main'
